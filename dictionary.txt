@@ -21,3 +21,4 @@ evenQ:rec (λf.λn.geq 2 n (f (minus 2 n)) (is0 n))
 div:λn.rec (λf.λm.geq n m (succ (f (minus n m))) 0)
 mod:λm.λn.minus (times (div m n) m) n
 isprime:λn.not (right ((minus 2 n) (λp.pair (succ (left p)) (or (right p) (is0 (mod (left p) n)))) (pair 2 F)))
+fib:λn.left (n (λp.pair (right p) (plus (left p) (right p))) (pair 0 1))
