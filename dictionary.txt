@@ -7,6 +7,9 @@ times:λn.λm.λf.n (m f)
 pred:λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)
 minus:λn.λm.n pred m
 geq:λn.λm.is0 (minus m n)
+pair:λx.λy.λc.c x y
+left:λp.p T
+right:λp.p F
 and:λa.λb.a b F
 or:λa.λb.a T b
 eq:λn.λm.and (geq n m) (geq m n)
@@ -16,3 +19,5 @@ rec2:λf.(λx.f (x x)) (λx.f (x x))
 fact:rec2 (λg.λn.eq n 1 1 (times (g (pred n)) n))
 evenQ:rec (λf.λn.geq 2 n (f (minus 2 n)) (is0 n))
 div:λn.rec (λf.λm.geq n m (succ (f (minus n m))) 0)
+mod:λm.λn.minus (times (div m n) m) n
+isprime:λn.not (right ((minus 2 n) (λp.pair (succ (left p)) (or (right p) (is0 (mod (left p) n)))) (pair 2 F)))
