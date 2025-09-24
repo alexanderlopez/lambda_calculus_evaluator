@@ -1,0 +1,8 @@
+T:λx.λy.x
+F:λx.λy.y
+is0:λn.n (λx.F) T
+succ:λn.λf.λx.f (n f x)
+plus:λn.λm.λf.λx.n f (m f x)
+times:λn.λm.λf.n (m f)
+pred:λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)
+minus:λn.λm.n pred m

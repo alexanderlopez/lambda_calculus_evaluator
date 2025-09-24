@@ -190,7 +190,7 @@ def mustTrim(string):
 
     return True
 
-def parseExpression(string):
+def parseExpression(string, dictionary):
     if mustTrim(string):
         string = string[1:-1]
 
@@ -198,20 +198,51 @@ def parseExpression(string):
         varEnd = string.find('.')
         variable = string[1:varEnd]
         defString = string[varEnd + 1:]
-        return LambdaTerm(1, [variable, parseExpression(defString)])
+        return LambdaTerm(1, [variable, parseExpression(defString, dictionary)])
 
     if string.find(' ') == -1:
-        return LambdaTerm(0, string)
+        if string in dictionary:
+            return parseExpression(dictionary[string], dictionary)
+        elif string.isdigit():
+            church_numeral = 'λf.λx.'
+            for x in range(int(string)):
+                church_numeral += 'f ('
+            church_numeral += 'x'
+            for x in range(int(string)):
+                church_numeral += ')'
+            return parseExpression(church_numeral, dictionary)
+        else:
+            return LambdaTerm(0, string)
 
     # split into outer tokens that skip round brackets.
     # we must be in an application
     splitSpace = getSpace(string)
     leftExpr = string[:splitSpace]
     rightExpr = string[splitSpace+1:]
-    return LambdaTerm(2, [parseExpression(leftExpr), parseExpression(rightExpr)])
+    return LambdaTerm(2, [parseExpression(leftExpr, dictionary), parseExpression(rightExpr, dictionary)])
+
+def loopEval(lambdaExpr):
+    result = lambdaExpr.outerEvalStep()
+    while result[1]:
+        result = result[0].outerEvalStep()
+    print(result[0].pretty())
 
 if __name__ == '__main__':
-    lambdaExpr = parseExpression(sys.argv[1])
+    replaceDict = dict()
+    expression = ''
+    if len(sys.argv) == 3:
+        expression = sys.argv[2]
+        mappingFile = open(sys.argv[1], 'rt')
+        currentLine = mappingFile.readline().strip()
+        while currentLine != '':
+            splitLine = currentLine.split(':')
+            replaceDict[splitLine[0]] = splitLine[1]
+            currentLine = mappingFile.readline().strip()
+        mappingFile.close()
+    else:
+        expression = sys.argv[1]
+
+    lambdaExpr = parseExpression(expression, replaceDict)
     print(lambdaExpr.pretty())
     result = (lambdaExpr, False)
     #print(lambdaExpr)
