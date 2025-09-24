@@ -245,4 +245,3 @@ if __name__ == '__main__':
     lambdaExpr = parseExpression(expression, replaceDict)
     print(lambdaExpr.pretty())
     result = (lambdaExpr, False)
-    #print(lambdaExpr)

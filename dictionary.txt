@@ -6,3 +6,13 @@ plus:λn.λm.λf.λx.n f (m f x)
 times:λn.λm.λf.n (m f)
 pred:λn.λf.λx.n (λg.λh.h (g f)) (λu.x) (λu.u)
 minus:λn.λm.n pred m
+geq:λn.λm.is0 (minus m n)
+and:λa.λb.a b F
+or:λa.λb.a T b
+eq:λn.λm.and (geq n m) (geq m n)
+not:λa.a F T
+rec:λf.(λx.λy.y (x x y)) (λx.λy.y (x x y)) f
+rec2:λf.(λx.f (x x)) (λx.f (x x))
+fact:rec2 (λg.λn.eq n 1 1 (times (g (pred n)) n))
+evenQ:rec (λf.λn.geq 2 n (f (minus 2 n)) (is0 n))
+div:λn.rec (λf.λm.geq n m (succ (f (minus n m))) 0)
